@@ -1,4 +1,6 @@
 # mbtiles2pbf
+![](https://github.com/watergis/mbtiles2pbf/workflows/Node.js%20Package/badge.svg)
+
 This module will extract pbf files from mbtile by using mbutil.
 
 ## Requirements
