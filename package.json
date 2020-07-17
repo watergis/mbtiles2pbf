@@ -1,0 +1,45 @@
+{
+  "name": "@watergis/mbtiles2pbf",
+  "version": "0.0.1",
+  "description": "This module will extract pbf files from mbtile by using mbutil.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "es6/index.js",
+  "files": [
+    "dist",
+    "es6"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "scripts": {
+    "test": "npx mocha",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc --project . --module commonjs --outDir ./dist",
+    "build:esm": "tsc --project . --module es2015 --outDir ./es6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/watergis/mbtiles2pbf.git"
+  },
+  "author": "Jin IGARASHI",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/watergis/mbtiles2pbf/issues"
+  },
+  "homepage": "https://github.com/watergis/mbtiles2pbf#readme",
+  "devDependencies": {
+    "@types/es6-promise": "^3.3.0",
+    "@types/node": "^14.0.23",
+    "@types/rimraf": "^3.0.0",
+    "chai": "^4.2.0",
+    "mocha": "^8.0.1",
+    "typescript": "^3.9.6"
+  },
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7",
+    "rimraf": "^3.0.2"
+  }
+}
