@@ -1,5 +1,6 @@
 es6/
 test/tiles
+.vscode
 
 # Logs
 logs
