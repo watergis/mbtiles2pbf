@@ -37,12 +37,12 @@ npm install @watergis/mbtiles2pbf
 ## Execute
 
 ```js
-const {Mbtiles2Pbf} = require('@watergis/mbtiles2pbf');
+const {Mbtiles2Pbf, FileExtension} = require('@watergis/mbtiles2pbf');
 
 const src = __dirname + '/test.mbtiles'
 const dist = __dirname + '/tiles'
 
-const mbtile2pbf = new Mbtiles2Pbf(src, dist, ".mvt");
+const mbtile2pbf = new Mbtiles2Pbf(src, dist, FileExtension.MVT);
 mbtile2pbf.run()
 .then(no_files=>{console.log(no_files)})
 .catch(err=>{console.log(err)})

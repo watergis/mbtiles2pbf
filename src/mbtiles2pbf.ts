@@ -4,10 +4,15 @@ import path from 'path'
 import zlib from 'zlib'
 import rimraf from 'rimraf'
 
+export enum FileExtension{
+    PBF = '.pbf',
+    MVT = '.mvt'
+}
+
 class mbtiles2pbf{
     private src: string
     private dist: string
-    private ext: string
+    private ext: FileExtension
 
     /**
      * Constructor
@@ -15,10 +20,10 @@ class mbtiles2pbf{
      * @param dist string directory path for pbf vector tiles
      * @param ext string Extension for vectortiles. Default is ".pbf".
      */
-    constructor(src:string, dist:string, ext?: string){
+    constructor(src:string, dist:string, ext?: FileExtension){
         this.src = src
         this.dist = dist
-        this.ext = (ext)?ext:'.pbf'
+        this.ext = (ext)?ext:FileExtension.PBF
     }
 
     run(){
@@ -70,13 +75,13 @@ class mbtiles2pbf{
             files.forEach((f:string)=>{
                 var gzipContent = fs.readFileSync(f)
                 var ext = path.extname(f)
-                if (ext !== '.pbf'){
+                if (ext !== FileExtension.PBF){
                     return
                 }
                 const binary = zlib.gunzipSync(gzipContent)
                 let f2 = f
-                if (this.ext !== '.pbf'){
-                    f2 = f.replace('.pbf', this.ext)
+                if (this.ext !== FileExtension.PBF){
+                    f2 = f.replace(FileExtension.PBF, this.ext)
                 }
                 fs.writeFileSync(f2, binary)
                 fs.unlinkSync(f)
