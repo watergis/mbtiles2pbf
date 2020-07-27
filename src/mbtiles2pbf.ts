@@ -1,8 +1,6 @@
-import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs-extra';
+import Database from 'better-sqlite3';
 import zlib from 'zlib';
-import rimraf from 'rimraf';
 
 export const FileExtension = {
   PBF: '.pbf',
@@ -31,14 +29,8 @@ class mbtiles2pbf {
     return new Promise<number>(
       (resolve: (value?: number) => void, reject: (reason?: any) => void) => {
         this.extract()
-          .then((dist: string) => {
-            return this.getFiles(dist);
-          })
-          .then((files: string[]) => {
-            return this.gunzip(files);
-          })
           .then((no_files: number) => {
-            console.log(`${no_files} tiles were unzipped.`);
+            console.log(`${no_files} tiles were generated.`);
             resolve(no_files);
           })
           .catch((err) => {
@@ -49,75 +41,38 @@ class mbtiles2pbf {
   }
 
   extract() {
-    return new Promise<string>(
-      (resolve: (value?: string) => void, reject: (reason?: any) => void) => {
-        try {
-          if (fs.existsSync(this.dist)) {
-            rimraf.sync(this.dist);
-          }
-          execSync(
-            `mb-util ${this.src} ${this.dist} --scheme=xyz --image_format=pbf --silent`
-          );
-          console.log(`pbf files were extracted under ${this.dist}.`);
-          resolve(this.dist);
-        } catch (err) {
-          reject(err);
-        }
-      }
-    );
-  }
-
-  getFiles(dir: string) {
-    return new Promise<string[]>(
-      (resolve: (value?: string[]) => void, reject: (reason?: any) => void) => {
-        try {
-          let files: string[] = [];
-          const dirents = fs.readdirSync(dir, { withFileTypes: true });
-          dirents.forEach((dirent) => {
-            const fp = path.join(dir, dirent.name);
-            if (dirent.isDirectory()) {
-              this.getFiles(fp).then((_files: string[]) => {
-                _files.forEach((f: string) => {
-                  files.push(f);
-                });
-              });
-            } else {
-              files.push(fp);
-            }
-          });
-          resolve(files);
-        } catch (err) {
-          reject(err);
-        }
-      }
-    );
-  }
-
-  gunzip(files: string[]) {
     return new Promise<number>(
       (resolve: (value?: number) => void, reject: (reason?: any) => void) => {
         try {
-          files.forEach((f: string) => {
-            var gzipContent = fs.readFileSync(f);
-            var ext = path.extname(f);
-            if (ext !== FileExtension.PBF) {
-              return;
-            }
-            const binary = zlib.gunzipSync(gzipContent);
-            let f2 = f;
-            if (this.ext !== FileExtension.PBF) {
-              f2 = f.replace(FileExtension.PBF, this.ext);
-            }
-            fs.writeFileSync(f2, binary);
-            fs.unlinkSync(f);
-            console.log(f2);
-          });
-          resolve(files.length);
+          const db = new Database(this.src, { readonly: true });
+          const count = db.prepare('SELECT count(*) FROM tiles').get()[
+            'count(*)'
+          ];
+          let c = 0;
+          for (const r of db.prepare('SELECT * FROM tiles').iterate()) {
+            const buf = zlib.unzipSync(r.tile_data);
+            const z = r.zoom_level;
+            const x = r.tile_column;
+            const y = (1 << z) - r.tile_row - 1;
+            fs.mkdirsSync(`${this.dist}/${z}/${x}`);
+            fs.writeFileSync(`${this.dist}/${z}/${x}/${y}${this.ext}`, buf);
+            this.report(++c, count, `${this.dist}/${z}/${x}/${y}${this.ext}`);
+          }
+          db.close();
+          resolve(c);
         } catch (err) {
           reject(err);
         }
       }
     );
+  }
+
+  report(c: number, count: number, path: string) {
+    if (c === count || c % 1000 === 0) {
+      console.log(
+        `${c} of ${count} (${Math.round((c * 100.0) / count)}%) ${path}`
+      );
+    }
   }
 }
 

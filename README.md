@@ -1,32 +1,7 @@
 # mbtiles2pbf
 ![](https://github.com/watergis/mbtiles2pbf/workflows/Node.js%20Package/badge.svg)
 
-This module will extract pbf files from mbtile by using mbutil.
-
-## Requirements
-
-This module depends on [MBUtil](https://github.com/mapbox/mbutil) of Python. Please install it before executing.
-
-Git checkout (requires git)
-```sh
-git clone git://github.com/mapbox/mbutil.git
-cd mbutil
-# get usage
-./mb-util -h
-```
-
-Then to install the mb-util command globally:
-```sh
-sudo python setup.py install
-# then you can run:
-mb-util
-```
-
-Python installation (requires easy_install)
-```sh
-easy_install mbutil
-mb-util -h
-```
+This module will extract pbf files from mbtile by using Nodejs.
 
 ## Installation
 

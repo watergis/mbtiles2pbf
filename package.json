@@ -1,6 +1,6 @@
 {
   "name": "@watergis/mbtiles2pbf",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "This module will extract pbf files from mbtile by using mbutil.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +13,7 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "scripts": {
-    "test": "npx mocha",
+    "test": "jest",
     "build": "npm run build:cjs && npm run build:esm",
     "build:cjs": "tsc --project . --module commonjs --outDir ./dist",
     "build:esm": "tsc --project . --module es2015 --outDir ./es6",
@@ -30,23 +30,46 @@
   },
   "homepage": "https://github.com/watergis/mbtiles2pbf#readme",
   "devDependencies": {
+    "@types/better-sqlite3": "^5.4.0",
     "@types/es6-promise": "^3.3.0",
+    "@types/fs-extra": "^9.0.1",
+    "@types/jest": "^26.0.7",
     "@types/node": "^14.0.23",
     "@types/rimraf": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^3.6.1",
-    "chai": "^4.2.0",
     "eslint": "^7.4.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "mocha": "^8.0.1",
+    "jest": "^26.1.0",
     "prettier": "^2.0.5",
+    "ts-jest": "^26.1.3",
     "typescript": "^3.9.6"
   },
   "dependencies": {
-    "child_process": "^1.0.2",
-    "fs": "0.0.1-security",
-    "path": "^0.12.7",
-    "rimraf": "^3.0.2"
+    "better-sqlite3": "^7.1.0",
+    "fs-extra": "^9.0.1",
+    "rimraf": "^3.0.2",
+    "zlib": "^1.0.5"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/test/**/*.test.ts"
+    ],
+    "moduleNameMapper": {
+      "^#/(.+)": "<rootDir>/src/$1"
+    }
   }
 }
