@@ -48,6 +48,7 @@ class mbtiles2pbf {
           const count = db.prepare('SELECT count(*) FROM tiles').get()[
             'count(*)'
           ];
+
           let c = 0;
           for (const r of db.prepare('SELECT * FROM tiles').iterate()) {
             const buf = zlib.unzipSync(r.tile_data);
@@ -58,6 +59,19 @@ class mbtiles2pbf {
             fs.writeFileSync(`${this.dist}/${z}/${x}/${y}${this.ext}`, buf);
             this.report(++c, count, `${this.dist}/${z}/${x}/${y}${this.ext}`);
           }
+
+          let metadata: { [key: string]: string } = {};
+          var rows: Array<{ [key: string]: string }> = db
+            .prepare('SELECT name, value FROM metadata')
+            .all();
+          rows.forEach((row: { [key: string]: string }) => {
+            metadata[row.name] = row.value;
+          });
+          fs.writeFileSync(
+            `${this.dist}/metadata.json`,
+            JSON.stringify(metadata, null, 4)
+          );
+
           db.close();
           resolve(c);
         } catch (err) {

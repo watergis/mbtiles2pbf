@@ -1,6 +1,6 @@
 {
   "name": "@watergis/mbtiles2pbf",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "This module will extract pbf files from mbtile by using mbutil.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
