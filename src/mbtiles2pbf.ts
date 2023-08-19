@@ -19,10 +19,11 @@ class mbtiles2pbf {
    * @param dist string directory path for pbf vector tiles
    * @param ext string Extension for vectortiles. Default is ".pbf".
    */
-  constructor(src: string, dist: string, ext?: FileExtension) {
+  constructor(src: string, dist: string, ext?: FileExtension, listener?: any) {
     this.src = src;
     this.dist = dist;
     this.ext = ext ? ext : FileExtension.PBF;
+    this.listener = listener;
   }
 
   run() {
@@ -82,6 +83,9 @@ class mbtiles2pbf {
   }
 
   report(c: number, count: number, path: string) {
+    if (listener) {
+      listener(c, count, path);
+    }
     if (c === count || c % 1000 === 0) {
       console.log(
         `${c} of ${count} (${Math.round((c * 100.0) / count)}%) ${path}`
