@@ -27,7 +27,7 @@ class mbtiles2pbf {
 
   run() {
     return new Promise<number>(
-      (resolve: (value?: number) => void, reject: (reason?: any) => void) => {
+      (resolve, reject) => {
         this.extract()
           .then((no_files: number) => {
             console.log(`${no_files} tiles were generated.`);
@@ -42,15 +42,15 @@ class mbtiles2pbf {
 
   extract() {
     return new Promise<number>(
-      (resolve: (value?: number) => void, reject: (reason?: any) => void) => {
+      (resolve, reject) => {
         try {
           const db = new Database(this.src, { readonly: true });
-          const count = db.prepare('SELECT count(*) FROM tiles').get()[
+          const count = (db.prepare('SELECT count(*) FROM tiles') as any).get()[
             'count(*)'
           ];
 
           let c = 0;
-          for (const r of db.prepare('SELECT * FROM tiles').iterate()) {
+          for (const r of (db.prepare('SELECT * FROM tiles').iterate() as any)) {
             const buf = zlib.unzipSync(r.tile_data);
             const z = r.zoom_level;
             const x = r.tile_column;
@@ -61,7 +61,7 @@ class mbtiles2pbf {
           }
 
           let metadata: { [key: string]: string } = {};
-          var rows: Array<{ [key: string]: string }> = db
+          var rows: any = db
             .prepare('SELECT name, value FROM metadata')
             .all();
           rows.forEach((row: { [key: string]: string }) => {
